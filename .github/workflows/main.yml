@@ -1,22 +1,18 @@
 name: CICD
-
 on:
   pull_request:
   push:
     branches:
       - master
-
 jobs:
   test:
     strategy:
       matrix:
         runs-on: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.runs-on }}
-
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v3
       - name: Convert
         id: convert
         uses: ./
@@ -30,7 +26,6 @@ jobs:
 
             * List Item 1
             * List Item 2
-
       - name: Verify
         shell: bash
         env:
@@ -50,15 +45,13 @@ jobs:
             echo "Expected: $EXPECTED"
             exit 1
           fi
-
   release:
     needs: test
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v3
       - name: Release
         id: release
         uses: cycjimmy/semantic-release-action@v2
@@ -68,7 +61,6 @@ jobs:
             @semantic-release/git
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Update major version tag
         if: steps.release.outputs.new_release_published == 'true'
         env:
